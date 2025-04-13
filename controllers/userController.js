@@ -65,7 +65,7 @@ export function loginUser(req,res){
                   isDisabled:user.isDisabled,
                  isEmailVerified:user.isEmailVerified
               }
-              const token=jwt.sign(userData,"random456")
+              const token=jwt.sign(userData,process.env.JWT_KEY);
 
               res.json({
                 message:"Login successful",
