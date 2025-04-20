@@ -53,7 +53,11 @@ export function loginUser(req,res){
                 message:"Invalid email"
             })
         }else{
-           const isPasswordCorrect=bcrypt.compareSync(password,user.password)
+           const isPasswordCorrect=bcrypt.compareSync(password,user.password);
+           //check for user.isdisabled
+           //check you invalid attempts
+           //if invalid attempts > 3 AND user.blockUntil > Date.now() res.status(403).json({message:"You are blocked"})
+
            if(isPasswordCorrect){
             
               const userData={
@@ -65,17 +69,26 @@ export function loginUser(req,res){
                   isDisabled:user.isDisabled,
                  isEmailVerified:user.isEmailVerified
               }
-              const token=jwt.sign(userData,process.env.JWT_KEY);
+              const token=jwt.sign(userData,process.env.JWT_KEY,{
+                expiresIn:"48hrs"
+              })
 
               res.json({
                 message:"Login successful",
                 token:token,
+                user:userData,
             });
 
            }else{
                res.status(403).json({
                    message:"Invalid password"
-               })
+               });
+               //user->blockuntil=Date.now(+5*60*1000)
+               //user->save()
+               //user->invalidattempts=default=0+1
+               //if (user.invalidattempts > 3){
+               //user.isdisabled=true
+
            }
            }
                })
