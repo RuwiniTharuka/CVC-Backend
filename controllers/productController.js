@@ -1,4 +1,4 @@
-import Product from "../models/product.js";
+import Product from "../models/Product.js";
 export async function createProduct(req, res) {
   if (req.user == null) {
     res.status(403).json({
@@ -40,6 +40,21 @@ export async function createProduct(req, res) {
         })
       }
     )*/
+export async function getProductById(req, res) {
+  const productId = req.params.id;
+  console.log(productId);
+  const product = await Product.findOne({ productId: productId });
+  if (product == null) {
+    res.status(404).json({
+      message: "Product not found",
+    });
+    return;
+  }
+  res.json({
+    product: product,
+  });
+}
+
 export function getProducts(req, res) {
   Product.find()
     .then((products) => {
@@ -104,6 +119,7 @@ export function updateProduct(req, res) {
       });
     })
     .catch((err) => {
+      console.log(err);
       res.status(500).json({
         message: "Product not updated",
       });
